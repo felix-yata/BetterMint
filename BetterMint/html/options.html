@@ -375,11 +375,6 @@
             </label>
         </div>
 
-        <div class="options-slider" data-min="0" data-max="100">
-            <div class="title">Best Move Chance:</div>
-            <input id="option-best-move-chance" type="range" value="30" />
-        </div>
-
         <div class="options-checkbox">
             <input id="option-random-best-move" type="checkbox" />
             <label for="option-random-best-move">Random Best Move
@@ -390,7 +385,12 @@
             </label>
         </div>
 
-        <div class=" options-slider" data-min="0" data-max="30000">
+        <div class="options-slider" data-min="0" data-max="100">
+            <div class="title">Best Move Chance:</div>
+            <input id="option-best-move-chance" type="range" value="30" />
+        </div>
+
+        <div class=" options-slider" data-min="-30000" data-max="30000">
             <div class="title">Auto Move Delay:</div>
             <input id="option-auto-move-time" type="range" value="5000" />
         </div>
@@ -400,7 +400,7 @@
             <input id="option-auto-move-time-random" type="range" value="0" />
         </div>
 
-        <div class="options-slider" data-min="-150" data-max="150">
+        <div class="options-slider" data-min="-500" data-max="500">
             <div class="title">Auto Move Delay Randomization Divider:</div>
             <input id="option-auto-move-time-random-div" type="range" value="10" />
         </div>
@@ -408,6 +408,49 @@
         <div class="options-slider" data-min="-2000" data-max="2000">
             <div class="title">Auto Move Delay Randomization Multiplier:</div>
             <input id="option-auto-move-time-random-multi" type="range" value="1000" />
+        </div>
+
+        <br>
+        <h1 style="text-align: center; font-size: 20px;">Premove Options (Auto Move needed)</h1>
+        <br>
+
+        <div class="options-checkbox">
+            <input id="option-premove-enabled" type="checkbox" />
+            <label for="option-premove-enabled">Premoves
+                <div class="tooltip">
+                    <span class="material-icons" style="color: #777777; font-size: 20px !important;">help</span>
+                    <span class="tooltiptext">Let us make premoves for you!
+                        <span style="color: #D64045">
+                            I love me
+                        </span>
+                    </span>
+                </div>
+            </label>
+        </div>
+
+        <div class=" options-slider" data-min="0" data-max="10">
+            <div class="title">Max Premoves:</div>
+            <input id="option-max-premoves" type="range" value="3" />
+        </div>
+
+        <div class=" options-slider" data-min="-30000" data-max="30000">
+            <div class="title">Premove Delay:</div>
+            <input id="option-premove-time" type="range" value="1000" />
+        </div>
+
+        <div class="options-slider" data-min="-10000" data-max="10000">
+            <div class="title">Premove Delay Randomization:</div>
+            <input id="option-premove-time-random" type="range" value="500" />
+        </div>
+
+        <div class="options-slider" data-min="-500" data-max="500">
+            <div class="title">Premove Delay Randomization Divider:</div>
+            <input id="option-premove-time-random-div" type="range" value="100" />
+        </div>
+
+        <div class="options-slider" data-min="-2000" data-max="2000">
+            <div class="title">Premove Delay Randomization Multiplier:</div>
+            <input id="option-premove-time-random-multi" type="range" value="1" />
         </div>
 
     </div>
@@ -443,7 +486,7 @@
             <h2>Config</h2>
             <br>
             <div class="sd">
-                <input type="file" id="import-file-input" accept=".config" style="display:none">
+                <input type="file" id="import-file-input" accept=".mint" style="display:none">
                 <div class="button-container">
                     <button id="export-btn" class="button" role="button">Export Config</button>
                     <button id="import-btn" class="button" role="button">Import Config</button>

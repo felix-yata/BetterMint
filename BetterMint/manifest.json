@@ -20,7 +20,7 @@
     "content_scripts": [
         {
             "js": [
-                "js/loader.js"
+                "js/loader.js",
             ],
             "css": [
                 "css/depthbar.css",

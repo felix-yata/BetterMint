@@ -112,6 +112,12 @@ var enumOptions = {
   AutoMoveTimeRandom: "option-auto-move-time-random",
   AutoMoveTimeRandomDiv: "option-auto-move-time-random-div",
   AutoMoveTimeRandomMulti: "option-auto-move-time-random-multi",
+  Premove: "option-premove-enabled",
+  MaxPreMoves: "option-max-premoves",
+  PreMoveTime: "option-premove-time",
+  PreMoveTimeRandom: "option-premove-time-random",
+  PreMoveTimeRandomDiv: "option-premove-time-random-div",
+  PreMoveTimeRandomMulti: "option-premove-time-random-multi",
   LegitAutoMove: "option-legit-auto-move",
   BestMoveChance: "option-best-move-chance",
   RandomBestMove: "option-random-best-move",
@@ -929,124 +935,120 @@ class StockfishEngine {
       const currentFEN = this.BetterMintmaster.game.controller.getFEN();
       const currentTurn = currentFEN.split(" ")[1]; // 'w' or 'b'
       const playingAs = this.BetterMintmaster.game.controller.getPlayingAs();
-
-      // Debug logs for color/turn detection
-      //console.log("DEBUG COLOR/TURN:", {
-      //  playingAs,
-      //  currentTurn,
-      //  isPlayerBlack: this.BetterMintmaster.options.isPlayerBlack,
-      //  moveCounter: this.moveCounter,
-      //  maxAutoMoves: this.maxAutoMoves
-      //});
-
-      // [FIX] Execute pre-moves if:
-      // - It's player's turn AND
-      // - Haven't reached move limit
-      if (
-        ((playingAs === 1 && currentTurn === 'w') || 
-         (playingAs === 2 && currentTurn === 'b')) &&
-        this.moveCounter < this.maxAutoMoves &&
-        !this.hasShownLimitMessage
-      ) {
-        // console.log("EXECUTING PRE-MOVE FOR:", playingAs === 1 ? "WHITE" : "BLACK");
-        
-        const legalMoves = this.BetterMintmaster.game.controller.getLegalMoves();
-        const moveData = legalMoves.find(
-          move => move.from === bestMove.from && move.to === bestMove.to
-        );
-
-        if (moveData) {
-          moveData.userGenerated = true;
-
-          if (bestMove.promotion !== null) {
-            moveData.promotion = bestMove.promotion;
-          }
-
-          this.moveCounter++;
-
-          // Set instant execution
-          let auto_move_time = 0;
-
-          // console.time("pre-move-execution");
-          setTimeout(() => {
-            this.BetterMintmaster.game.controller.move(moveData);
-            // console.timeEnd("pre-move-execution");
-            
-            if (window.toaster) {
-              window.toaster.add({
-                id: "auto-move-counter",
-                duration: 2000,
-                icon: "circle-info",
-                content: `Pre-move ${this.moveCounter}/${this.maxAutoMoves} executed!`,
-                style: {
-                  position: "fixed",
-                  bottom: "120px",
-                  right: "30px",
-                  backgroundColor: "#2ecc71",
-                  color: "white"
-                }
-              });
+    
+      if (enumOptions.Premove && enumOptions.LegitAutoMove) {
+        // [FIX] Execute pre-moves if:
+        // - It's player's turn AND
+        // - Haven't reached move limit
+        if (
+          ((playingAs === 1 && currentTurn === 'w') || 
+           (playingAs === 2 && currentTurn === 'b')) &&
+          this.moveCounter < enumOptions.MaxPreMoves && // Use move counter instead of premove depth
+          !this.hasShownLimitMessage
+        ) {
+          const legalMoves = this.BetterMintmaster.game.controller.getLegalMoves();
+          const moveData = legalMoves.find(
+            move => move.from === bestMove.from && move.to === bestMove.to
+          );
+    
+          if (moveData) {
+            moveData.userGenerated = true;
+    
+            if (bestMove.promotion !== null) {
+              moveData.promotion = bestMove.promotion;
             }
-
-            if (this.moveCounter >= this.maxAutoMoves) {
+    
+            this.moveCounter++; // Increment move counter
+    
+            // Calculate pre-move execution time
+            let pre_move_time =
+              getValueConfig(enumOptions.PreMoveTime) +
+              (Math.floor(
+                Math.random() * getValueConfig(enumOptions.PreMoveTimeRandom)
+              ) %
+                getValueConfig(enumOptions.PreMoveTimeRandomDiv)) *
+                getValueConfig(enumOptions.PreMoveTimeRandomMulti);
+    
+            setTimeout(() => {
+              this.BetterMintmaster.game.controller.move(moveData);
+    
               if (window.toaster) {
                 window.toaster.add({
-                  id: "auto-move-limit",
-                  duration: 2000, // Reduced from 3000
-                  icon: "circle-checkmark",
-                  content: "Maximum pre-moves reached!",
+                  id: "auto-move-counter",
+                  duration: 2000,
+                  icon: "circle-info",
+                  content: `Pre-move ${this.moveCounter}/${enumOptions.MaxPreMoves} executed!`,
                   style: {
                     position: "fixed",
                     bottom: "120px",
                     right: "30px",
-                    backgroundColor: "#e67e22",
+                    backgroundColor: "#2ecc71",
                     color: "white"
                   }
                 });
               }
-              this.hasShownLimitMessage = true;
-            }
-          }, auto_move_time); // Execute immediately with 0ms delay
+    
+              if (this.moveCounter >= enumOptions.MaxPreMoves) {
+                if (window.toaster) {
+                  window.toaster.add({
+                    id: "auto-move-limit",
+                    duration: 2000, // Reduced from 3000
+                    icon: "circle-checkmark",
+                    content: "Maximum pre-moves reached!",
+                    style: {
+                      position: "fixed",
+                      bottom: "120px",
+                      right: "30px",
+                      backgroundColor: "#e67e22",
+                      color: "white"
+                    }
+                  });
+                }
+                this.hasShownLimitMessage = true;
+              }
+            }, pre_move_time); // Execute with calculated delay
+          }
+        } else {
+          // console.log("WAITING FOR CORRECT TURN OR MOVE LIMIT REACHED");
         }
-      } else {
-        // console.log("WAITING FOR CORRECT TURN OR MOVE LIMIT REACHED");
-      }
-
-      // Check for mate in 3 or less
-      if (bestMove.mate !== null && bestMove.mate > 0 && bestMove.mate <= 3) {
-        const legalMoves = this.BetterMintmaster.game.controller.getLegalMoves();
-        const moveData = legalMoves.find(
-          move => move.from === bestMove.from && move.to === bestMove.to
-        );
-
-        if (moveData) {
-          moveData.userGenerated = true;
-
-          if (bestMove.promotion !== null) {
-            moveData.promotion = bestMove.promotion;
+    
+        // Check for mate in 3 or less
+        if (bestMove.mate !== null && bestMove.mate > 0 && bestMove.mate <= 3) {
+          const legalMoves = this.BetterMintmaster.game.controller.getLegalMoves();
+          const moveData = legalMoves.find(
+            move => move.from === bestMove.from && move.to === bestMove.to
+          );
+    
+          if (moveData) {
+            moveData.userGenerated = true;
+    
+            if (bestMove.promotion !== null) {
+              moveData.promotion = bestMove.promotion;
+            }
+    
+            if (window.toaster) {
+              window.toaster.add({
+                id: "premove-mate",
+                duration: 2000,
+                icon: "circle-checkmark",
+                content: `BetterMint: Mate in ${bestMove.mate} move(s)! Executing premove...`,
+                style: {
+                  position: "fixed",
+                  bottom: "120px",
+                  right: "30px",
+                  backgroundColor: "#1baca6",
+                  color: "white",
+                  fontWeight: "bold",
+                },
+              });
+            }
+    
+            this.BetterMintmaster.game.controller.move(moveData);
           }
-
-          if (window.toaster) {
-            window.toaster.add({
-              id: "premove-mate",
-              duration: 2000,
-              icon: "circle-checkmark",
-              content: `BetterMint: Mate in ${bestMove.mate} move(s)! Executing premove...`,
-              style: {
-                position: "fixed",
-                bottom: "120px",
-                right: "30px",
-                backgroundColor: "#1baca6",
-                color: "white",
-                fontWeight: "bold",
-              },
-            });
-          }
-
-          this.BetterMintmaster.game.controller.move(moveData);
         }
       }
     }
+    
     if (getValueConfig(enumOptions.TextToSpeech)) {
       const topMove = this.topMoves[0]; // Select the top move from the PV list
       const msg = new SpeechSynthesisUtterance(topMove.move); // Use topMove.move for the spoken text

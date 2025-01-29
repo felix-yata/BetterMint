@@ -46,6 +46,24 @@ let inputObjects = {
   "option-legit-auto-move": {
     default_value: false,
   },
+  "option-max-premoves": {
+    default_value: 3, // Maximum number of pre-moves allowed
+  },
+  "option-premove-enabled": {
+    default_value: false, // Enable or disable pre-moves
+  },
+  "option-premove-time": {
+    default_value: 1000, // Base time for pre-move execution
+  },
+  "option-premove-time-random": {
+    default_value: 500, // Random time range for pre-move execution
+  },
+  "option-premove-time-random-div": {
+    default_value: 100, // Divisor for random time calculation
+  },
+  "option-premove-time-random-multi": {
+    default_value: 1, // Multiplier for random time calculation
+  },
   "option-best-move-chance": {
     default_value: 30,
   },
@@ -141,24 +159,24 @@ function InitOptions() {
       const minValue = parseInt(input.min);
       const maxValue = parseInt(input.max);
       const percent = ((value - minValue) / (maxValue - minValue)) * 100;
-      const bg = `linear-gradient(90deg, ${sliderProps.fill} ${percent}%, ${
-        sliderProps.background
-      } ${percent + 0.1}%)`;
+      const bg = `linear-gradient(90deg, ${sliderProps.fill} ${percent}%, ${sliderProps.background} ${percent + 0.1}%)`;
       input.style.background = bg;
       title.setAttribute("data-value", input.value);
-      if (!event.disableUpdate) OnOptionsChange();
+      if (!event.disableUpdate) {
+        OnOptionsChange(); // Trigger change immediately
+      }
     });
   });
 
   document.querySelectorAll(".options-checkbox").forEach(function (checkbox) {
     checkbox.addEventListener("change", function () {
-      OnOptionsChange();
+      OnOptionsChange(); // Trigger change immediately
     });
   });
 
   document.querySelectorAll(".options-text").forEach(function (text) {
     text.addEventListener("change", function () {
-      OnOptionsChange();
+      OnOptionsChange(); // Trigger change immediately
     });
   });
 
@@ -268,6 +286,44 @@ window.onload = function () {
     setTimeout(() => {
       document.getElementsByClassName("lmco")[0].style.display = "none";
     }, 500);
+  });
+
+  // Export Config
+  document.getElementById("export-btn").addEventListener("click", function () {
+    chrome.storage.sync.get(null, function (data) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "config.mint";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  });
+
+  // Import Config
+  document.getElementById("import-btn").addEventListener("click", function () {
+    const fileInput = document.getElementById("import-file-input");
+    fileInput.click();
+  });
+
+  document.getElementById("import-file-input").addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const config = JSON.parse(e.target.result);
+          chrome.storage.sync.set(config, function () {
+            RestoreOptions(); // Update the UI with the new settings
+            alert("Configuration imported successfully!");
+          });
+        } catch (error) {
+          alert("Invalid configuration file.");
+        }
+      };
+      reader.readAsText(file);
+    }
   });
 
   InitOptions();

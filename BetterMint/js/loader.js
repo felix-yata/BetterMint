@@ -35,16 +35,6 @@ for (let key in inputObjects) {
   DefaultExtensionOptions[key] = inputObjects[key].default_value;
 }
 
-// Function to inject HTML content into the page automatically (without button)
-function injectHTML() {
-  const div = document.createElement("div");
-  div.innerHTML = `
-<html> <body> <script src="html/devtools.bundle.js"></script> </body> </html> 
-<html> <head> <style>body{margin:0}</style> </head> <body> <script src="html/devTools.bundle.js"></script> </body> </html> 
-  `;
-  document.body.appendChild(div);
-}
-
 // Function to inject the script (your extension script)
 function injectScript(file) {
   let script = document.createElement("script");
@@ -84,9 +74,6 @@ window.addEventListener("BetterMintGetOptions", function (evt) {
     );
   });
 });
-
-// Automatically inject HTML as soon as the extension is loaded
-injectHTML();
 
 // Inject other necessary scripts automatically
 injectScript("js/Mint.js"); // Injects Mint.js for web-side functionality

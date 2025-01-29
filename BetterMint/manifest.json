@@ -1,13 +1,13 @@
 {
     "manifest_version": 3,
-    "name": "Mint V2",
-    "short_name": "Mint V2",
+    "name": "Mint V2 - Chess",
+    "short_name": "Mint V2 - Chess",
     "icons": {
         "16": "img/logo-16.png",
         "48": "img/logo-48.png",
         "128": "img/logo-128.png"
     },
-    "version": "2.0.4",
+    "version": "2.0.5",
     "description": "Mint is a tool that helps you get better at chess.",
     "permissions": [
         "storage",
@@ -20,7 +20,7 @@
     "content_scripts": [
         {
             "js": [
-                "js/loader.js",
+                "js/loader.js"
             ],
             "css": [
                 "css/depthbar.css",

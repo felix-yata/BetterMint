@@ -5,8 +5,6 @@ import asyncio
 from threading import Thread, Lock
 from queue import Queue, Empty
 import tkinter as tk
-import my_main_manager
-from my_main_manager import run_service
 from tkinter import filedialog
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,25 +15,6 @@ import time
 # Helper function to show progress messages
 def show_message(msg):
     print(f"\n{'-' * 50}\n{msg}\n{'-' * 50}")
-
-# Configuration loading process
-def engine_config():
-    task_done = False
-
-    def engine_task():
-        nonlocal task_done
-        run_service()
-        task_done = True
-
-    task_thread = Thread(target=engine_task, daemon=True)
-    task_thread.start()
-
-    while not task_done:
-        for dots in range(4):
-            sys.stdout.write(f"\rConfiguring engines{'.' * dots}   ")
-            sys.stdout.flush()
-            time.sleep(0.5)
-    print("\rConfiguration complete!                     ")
 
 # Function to enqueue subprocess output
 def enqueue_output(out, queue):
@@ -104,10 +83,6 @@ engine_exe_paths = filedialog.askopenfilenames(title="Select engine executable f
 if not engine_exe_paths:
     print("No engine selected. Exiting.")
     sys.exit()
-
-# Run configuration
-show_message("Starting configuration process...")
-engine_config()
 
 # Initialize engines
 engines = [EngineChess(path) for path in engine_exe_paths]

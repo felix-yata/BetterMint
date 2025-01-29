@@ -4,5 +4,4 @@ asyncio
 uvicorn
 uvicorn[standard]
 psutil
-git+https://codeberg.org/yesjdnke/manager.git#egg=my_main_manager
 requests

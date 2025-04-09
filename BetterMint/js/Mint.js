@@ -936,14 +936,14 @@ class StockfishEngine {
       const currentTurn = currentFEN.split(" ")[1]; // 'w' or 'b'
       const playingAs = this.BetterMintmaster.game.controller.getPlayingAs();
     
-      if (enumOptions.Premove && enumOptions.LegitAutoMove) {
+      if (getValueConfig(enumOptions.Premove) && getValueConfig(enumOptions.LegitAutoMove)) {
         // [FIX] Execute pre-moves if:
         // - It's player's turn AND
         // - Haven't reached move limit
         if (
           ((playingAs === 1 && currentTurn === 'w') || 
            (playingAs === 2 && currentTurn === 'b')) &&
-          this.moveCounter < enumOptions.MaxPreMoves && // Use move counter instead of premove depth
+          this.moveCounter < getValueConfig(enumOptions.MaxPreMoves) && // Use move counter instead of premove depth
           !this.hasShownLimitMessage
         ) {
           const legalMoves = this.BetterMintmaster.game.controller.getLegalMoves();
@@ -977,7 +977,7 @@ class StockfishEngine {
                   id: "auto-move-counter",
                   duration: 2000,
                   icon: "circle-info",
-                  content: `Pre-move ${this.moveCounter}/${enumOptions.MaxPreMoves} executed!`,
+                  content: `Pre-move ${this.moveCounter}/${getValueConfig(enumOptions.MaxPreMoves)} executed!`,
                   style: {
                     position: "fixed",
                     bottom: "120px",
@@ -988,7 +988,7 @@ class StockfishEngine {
                 });
               }
     
-              if (this.moveCounter >= enumOptions.MaxPreMoves) {
+              if (this.moveCounter >= getValueConfig(enumOptions.MaxPreMoves)) {
                 if (window.toaster) {
                   window.toaster.add({
                     id: "auto-move-limit",
@@ -1008,12 +1008,10 @@ class StockfishEngine {
               }
             }, pre_move_time); // Execute with calculated delay
           }
-        } else {
-          // console.log("WAITING FOR CORRECT TURN OR MOVE LIMIT REACHED");
         }
     
-        // Check for mate in 3 or less
-        if (bestMove.mate !== null && bestMove.mate > 0 && bestMove.mate <= 3) {
+        // Check for mate in 3 or less - MOVED INSIDE THE PREMOVE CHECK
+        if (bestMove.mate !== null && bestMove.mate > 0 && bestMove.mate <= getValueConfig(enumOptions.MateFinderValue)) {
           const legalMoves = this.BetterMintmaster.game.controller.getLegalMoves();
           const moveData = legalMoves.find(
             move => move.from === bestMove.from && move.to === bestMove.to

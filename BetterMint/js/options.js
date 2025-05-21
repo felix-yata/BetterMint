@@ -64,6 +64,9 @@ let inputObjects = {
   "option-premove-time-random-multi": {
     default_value: 1, // Multiplier for random time calculation
   },
+  "option-fast-mover": {
+    default_value: 0, // Ratio changer for slow-fast moves
+  },
   "option-best-move-chance": {
     default_value: 1,
   },

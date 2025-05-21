@@ -44,7 +44,7 @@ let inputObjects = {
     default_value: 1,
   },
   "option-legit-auto-move": {
-    default_value: false,
+    default_value: true,
   },
   "option-max-premoves": {
     default_value: 1, // Maximum number of pre-moves allowed

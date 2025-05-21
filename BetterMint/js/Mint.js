@@ -112,6 +112,7 @@ var enumOptions = {
   AutoMoveTimeRandom: "option-auto-move-time-random",
   AutoMoveTimeRandomDiv: "option-auto-move-time-random-div",
   AutoMoveTimeRandomMulti: "option-auto-move-time-random-multi",
+  FastMover: "option-fast-mover",
   Premove: "option-premove-enabled",
   MaxPreMoves: "option-max-premoves",
   PreMoveTime: "option-premove-time",
@@ -1214,7 +1215,8 @@ class StockfishEngine {
           Math.random() * getValueConfig(enumOptions.AutoMoveTimeRandom)
         ) %
           getValueConfig(enumOptions.AutoMoveTimeRandomDiv)) *
-          getValueConfig(enumOptions.AutoMoveTimeRandomMulti);
+          getValueConfig(enumOptions.AutoMoveTimeRandomMulti); //Fuck this it's not legit
+      //Will change and improve
       if (
         isNaN(auto_move_time) ||
         auto_move_time === null ||

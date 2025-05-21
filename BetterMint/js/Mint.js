@@ -1209,14 +1209,47 @@ class StockfishEngine {
           top_pv_moves = [fastestMateMove];
         }
       }
-      let auto_move_time =
-        getValueConfig(enumOptions.AutoMoveTime) +
-        (Math.floor(
-          Math.random() * getValueConfig(enumOptions.AutoMoveTimeRandom)
-        ) %
-          getValueConfig(enumOptions.AutoMoveTimeRandomDiv)) *
-          getValueConfig(enumOptions.AutoMoveTimeRandomMulti); //Fuck this it's not legit
-      //Will change and improve
+      let approved = false;
+      let auto_move_time;
+
+        while (!approved) {
+    // Calculate auto_move_time with random component each iteration
+          const AutoMoveTime = getValueConfig(enumOptions.AutoMoveTime);
+          const AutoMoveTimeRandom = getValueConfig(enumOptions.AutoMoveTimeRandom);
+          const AutoMoveTimeRandomDiv = getValueConfig(enumOptions.AutoMoveTimeRandomDiv);
+          const AutoMoveTimeRandomMulti = getValueConfig(enumOptions.AutoMoveTimeRandomMulti);
+          const FastMover = getValueConfig(enumOptions.FastMover);
+    
+          auto_move_time = AutoMoveTime + 
+              (Math.floor(Math.random() * AutoMoveTimeRandom) % AutoMoveTimeRandomDiv) * 
+              AutoMoveTimeRandomMulti;
+
+          if (FastMover === 0) {
+              approved = true;
+              break;
+          }
+
+          let K, B, AutoMoveChance;
+          const divisor = AutoMoveTimeRandomDiv * AutoMoveTimeRandomMulti;
+
+          if (FastMover > 0) {
+              K = (100 - FastMover) / divisor;
+              B = 100 - K * divisor;
+          } else {
+              const absFastMover = Math.abs(FastMover);
+              K = (absFastMover - 100) / divisor;
+              B = 100 - K * AutoMoveTime;
+          }
+
+    // Calculate approval chance
+          AutoMoveChance = K * auto_move_time + B;
+
+    // Check approval
+          if (Math.random() <= AutoMoveChance / 100) {
+              approved = true;
+          }
+      }
+      
       if (
         isNaN(auto_move_time) ||
         auto_move_time === null ||

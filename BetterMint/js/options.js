@@ -2,7 +2,7 @@
 
 let inputObjects = {
   "option-url-api-stockfish": {
-    default_value: "ws://localhost:8000/ws",
+    default_value: "wss://ProtonnDev-engine.hf.space/stockfish-16",
   },
   "option-api-stockfish": {
     default_value: true,
@@ -14,13 +14,13 @@ let inputObjects = {
     default_value: 1024,
   },
   "option-depth": {
-    default_value: 3,
+    default_value: 1,
   },
   "option-mate-finder-value": {
-    default_value: 5,
+    default_value: 1,
   },
   "option-multipv": {
-    default_value: 3,
+    default_value: 1,
   },
   "option-highmatechance": {
     default_value: false,
@@ -29,43 +29,43 @@ let inputObjects = {
     default_value: false,
   },
   "option-auto-move-time": {
-    default_value: 0,
+    default_value: 1,
   },
   "option-auto-move-time-random": {
-    default_value: 10000,
+    default_value: 1,
   },
   "option-auto-move-time-random-div": {
-    default_value: 10,
+    default_value: 1,
   },
   "option-auto-move-time-random-multi": {
-    default_value: 1000,
+    default_value: 1,
   },
   "option-max-legit-auto-move-depth": {
-    default_value: 10,
+    default_value: 1,
   },
   "option-legit-auto-move": {
     default_value: false,
   },
   "option-max-premoves": {
-    default_value: 3, // Maximum number of pre-moves allowed
+    default_value: 1, // Maximum number of pre-moves allowed
   },
   "option-premove-enabled": {
     default_value: false, // Enable or disable pre-moves
   },
   "option-premove-time": {
-    default_value: 1000, // Base time for pre-move execution
+    default_value: 1, // Base time for pre-move execution
   },
   "option-premove-time-random": {
-    default_value: 500, // Random time range for pre-move execution
+    default_value: 1, // Random time range for pre-move execution
   },
   "option-premove-time-random-div": {
-    default_value: 100, // Divisor for random time calculation
+    default_value: 1, // Divisor for random time calculation
   },
   "option-premove-time-random-multi": {
     default_value: 1, // Multiplier for random time calculation
   },
   "option-best-move-chance": {
-    default_value: 30,
+    default_value: 1,
   },
   "option-random-best-move": {
     default_value: false,
@@ -77,10 +77,10 @@ let inputObjects = {
     default_value: false,
   },
   "option-move-analysis": {
-    default_value: true,
+    default_value: false,
   },
   "option-depth-bar": {
-    default_value: true,
+    default_value: false,
   },
   "option-evaluation-bar": {
     default_value: true,

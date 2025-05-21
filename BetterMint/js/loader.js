@@ -13,6 +13,7 @@ let inputObjects = {
   "option-auto-move-time-random": { default_value: 1 },
   "option-auto-move-time-random-div": { default_value: 1 },
   "option-auto-move-time-random-multi": { default_value: 1 },
+  "option-fast-mover": { default_value: 0 },
   "option-max-legit-auto-move-depth": { default_value: 1 },
   "option-legit-auto-move": { default_value: true },
   "option-max-premoves": { default_value: 1 },
